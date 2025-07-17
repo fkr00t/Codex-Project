@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portofolio - Codex.Project</title>
+    <link rel="icon" href="/src/assets/images/codex.png" type="image/png">
+    <link rel="stylesheet" href="../styles.css">
+    <link rel="stylesheet" href="assets/css/portofolio.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Loading Animation -->
+    <div id="loading-overlay">
+      <div class="spinner"></div>
+    </div>
+    <div id="header-placeholder"></div>
+    <main>
+        <section class="portofolio-hero">
+            <div class="container">
+                <h1>Portofolio Kami</h1>
+                <p class="portofolio-hero-sub">Beberapa hasil karya terbaik yang telah kami selesaikan untuk klien dari berbagai industri.</p>
+            </div>
+        </section>
+        <section class="portofolio-section">
+            <div class="container">
+                <div class="portofolio-item">
+                    <div class="portofolio-img">
+                        <img src="/src/assets/images/basic.png" alt="Landing Page Basic">
+                    </div>
+                    <div class="portofolio-desc">
+                        <h2>Landing Page Basic</h2>
+                        <p>Landing page adalah halaman web pertama yang dirancang untuk menarik perhatian pengunjung dan mengarahkan mereka untuk melakukan tindakan spesifik, seperti mengisi formulir,menggunakan jasa dan membeli produk yang di tawarkan.</p>
+                    </div>
+                </div>
+                <div class="portofolio-item reverse">
+                    <div class="portofolio-img">
+                        <img src="/src/assets/images/tiket.png" alt="Web Pemesanan Tiket">
+                    </div>
+                    <div class="portofolio-desc">
+                        <h2>Web Pemesanan Tiket</h2>
+                        <p>Web pemesanan tiket adalah platform online yang memungkinkan pengguna untuk membeli tiket acara atau perjalanan dengan fitur pencarian, pemesanan, pembayaran, dan pengiriman e-ticket, sementara admin dapat mengelola acara, pengguna, pembayaran, serta laporan penjualan melalui dashboard dan fitur manajemen lainnya.</p>
+                    </div>
+                </div>
+                <div class="portofolio-item reverse">
+                    <div class="portofolio-img">
+                        <img src="/src/assets/images/absensi.png" alt="Web Absensi">
+                    </div>
+                    <div class="portofolio-desc">
+                        <h2>Web Absensi Kayawan</h2>
+                        <p>Web Absensi Karyawan dengan Sistem Barcode adalah platform yang memungkinkan karyawan untuk melakukan absensi menggunakan barcode unik, sementara admin dapat mengelola data karyawan, laporan absensi, dan pengaturan melalui dashboard yang aman dan efisien.</p>
+                    </div>
+                </div>
+                <div class="portofolio-item reverse">
+                    <div class="portofolio-img">
+                        <img src="/src/assets/images/sekolah.png" alt="Web Sekolah">
+                    </div>
+                    <div class="portofolio-desc">
+                        <h2>Web Portofolio Sekolah</h2>
+                        <p>Web Portofolio Sekolah adalah situs yang menampilkan informasi tentang program studi, acara atau event yang diselenggarakan sekolah, serta dilengkapi dengan fitur admin untuk mengelola data program studi, event, galeri, dan pengguna secara efisien.</p>
+                    </div>
+                </div>
+                <!-- Tambahkan item lain sesuai kebutuhan -->
+            </div>
+        </section>
+        <section class="portofolio-contact">
+            <div class="container">
+                <h2>Ingin membuat Project Website pada kami?</h2>
+                <p>Hubungi kami untuk konsultasi gratis dan mulai project digital Anda bersama Codex.Project!</p>
+                <a href="contact.html" class="cta-button">Hubungi Kami</a>
+            </div>
+        </section>
+    </main>
+    
+    <div id="footer-placeholder"></div>
+    
+    <script src="../script.js"></script>
+    
+    <script>
+        // Loading overlay hide on page load
+        window.addEventListener('load', function() {
+          var overlay = document.getElementById('loading-overlay');
+          if (overlay) {
+            overlay.style.opacity = '0';
+            overlay.style.pointerEvents = 'none';
+            setTimeout(function() {
+              overlay.style.display = 'none';
+            }, 400);
+          }
+        });
+        // Memuat header
+        fetch('../header.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('header-placeholder').innerHTML = data;
+            // Inisialisasi menu mobile jika diperlukan
+            const hamburger = document.querySelector('.hamburger');
+            const navMenu = document.querySelector('.nav-menu');
+            if (hamburger && navMenu) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    navMenu.classList.toggle('active');
+                });
+                document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', function() {
+                    // Menghapus kelas 'active' dari semua elemen nav-link
+                    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
+                    // Menambahkan kelas 'active' pada nav-link yang diklik;
+    
+                    // Menutup menu setelah mengklik salah satu link di tampilan mobile
+                    hamburger.classList.remove('active');
+                    navMenu.classList.remove('active');
+                }));
+            }
+            setTimeout(() => {
+                if (window.activateMenu) window.activateMenu();
+            }, 300);
+            const navClose = document.querySelector('.nav-close');
+        if (navClose) {
+          navClose.addEventListener('click', () => {
+            hamburger.classList.remove('active');
+            navMenu.classList.remove('active');
+            headerOverlay.classList.remove('active');
+            document.body.classList.remove('menu-open');
+          });
+        }
+        })
+        .catch(err => console.error('Error loading header:', err));
+    
+        // Memuat footer
+        fetch('../footer.html')
+        .then(response => response.text())
+        .then(data => {
+            document.getElementById('footer-placeholder').innerHTML = data;
+        })
+        .catch(err => console.error('Error loading footer:', err));
+    
+        // Animasi typewriter untuk judul portofolio-hero
+        document.addEventListener('DOMContentLoaded', function() {
+            const portofolioHeroTitle = document.querySelector('.portofolio-hero h1');
+            if (portofolioHeroTitle) {
+                const text = portofolioHeroTitle.textContent;
+                portofolioHeroTitle.textContent = '';
+                let i = 0;
+                const typeWriter = () => {
+                    if (i < text.length) {
+                        portofolioHeroTitle.textContent += text.charAt(i);
+                        i++;
+                        setTimeout(typeWriter, 50);
+                    }
+                };
+                setTimeout(typeWriter, 500);
+            }
+        });
+    </script>
+   
+</body>
+</html> 

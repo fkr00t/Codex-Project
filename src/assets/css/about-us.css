@@ -1,0 +1,731 @@
+@import url('../css/header.css');
+@import url('../css/footer.css');
+
+body {
+    background: url('/src/assets/images/baground.png') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed; /* Opsional, untuk efek parallax */
+    font-family: 'Poppins', sans-serif;
+}
+
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    
+}
+
+/* header overlay */
+.header-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.45); /* Lebih gelap */
+    z-index: 999;
+    transition: opacity 0.3s;
+    opacity: 0;
+    pointer-events: none;
+}
+.header-overlay.active {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+body.menu-open {
+    overflow: hidden;
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        left: auto;
+        right: -100%;
+        top: 0;
+        height: 100vh;
+        width: 80vw;
+        max-width: 350px;
+        background: #fff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 1.5rem;
+        box-shadow: 0 0 20px rgba(0,0,0,0.08);
+        transition: right 0.3s;
+        z-index: 1000;
+    }
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .nav-close {
+        display: block !important;
+        width: 100%;
+        text-align: right;
+        padding: 0.5rem 0.5rem 1rem 0;
+        font-size: 2rem;
+        cursor: pointer;
+        color: #2563eb;
+        border: none;
+        background: none;
+    }
+    .nav-close span {
+        font-size: 2.2rem;
+        font-weight: bold;
+        line-height: 1;
+        user-select: none;
+    }
+}
+/* header overlay */
+
+
+
+#loading-overlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255,255,255,0.95);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.4s;
+  }
+  .spinner {
+    width: 60px;
+    height: 60px;
+    border: 6px solid #e0e7ff;
+    border-top: 6px solid #2563eb;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+  
+.about-hero {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: white;
+    padding: 265px 0;
+    text-align: center;
+    /* Jika ingin animasi floating seperti .price-hero, bisa tambahkan di sini */
+}
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.about-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    line-height: 1.2;
+}
+
+.hero-subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin-bottom: 30px;
+}
+
+.about-section {
+    padding-top: 80px;
+    padding-bottom: 40px;
+    background-color: #fff;
+    
+}
+
+
+.pillar-section {
+    /* background: #fff; */
+    padding: 80px 0 60px 0;
+    text-align: center;
+    transition: all 0.5s ease;
+}
+.pillar-section h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.01em;
+}
+.pillar-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: stretch;
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.pillar-card {
+    position: relative;
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.10), 0 1.5px 6px rgba(0, 0, 0, 0.03);
+    padding: 2.5rem 1.5rem 2.2rem 1.5rem;
+    text-align: center;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), 
+                box-shadow 0.6s cubic-bezier(0.4, 0, 0.2, 1),
+                color 0.6s ease;
+}
+
+.pillar-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    z-index: 1;
+}
+
+.pillar-card:hover::before {
+    opacity: 1;
+}
+
+.pillar-card * {
+    position: relative;
+    z-index: 2;
+}
+
+.pillar-card:hover {
+    transform: translateY(-8px) scale(1.04);
+    box-shadow: 0 16px 48px rgba(37, 99, 235, 0.16), 0 2px 8px rgba(0, 0, 0, 0.06);
+    color: #fff;
+}
+
+
+.pillar-bg {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+    pointer-events: none;
+    transition: opacity 0.6s ease;
+}
+@media (max-width: 600px) {
+    .pillar-bg {
+        width: 200%;
+        height: 250%;
+        max-width: 100vw;
+        max-height: 180%;
+    }
+}
+
+.pillar-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    margin-top: 1.2rem;
+    box-shadow: 0 4px 24px rgba(0, 198, 251, 0.18);
+    position: relative;
+    z-index: 2;
+    color: #fff;
+    font-size: 2rem;
+    transition: background 0.6s ease, color 0.6s ease;
+}
+
+.pillar-card:hover .pillar-icon {
+    background: #fff;
+}
+
+.pillar-card:hover .pillar-icon i {
+    color: #764ba2;
+}
+
+.pillar-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #222;
+    position: relative;
+    z-index: 2;
+    letter-spacing: 0.01em;
+    text-align: center;
+}
+.pillar-card p {
+    color: #444;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    position: relative;
+    z-index: 2;
+    margin-bottom: 0;
+    text-align: center;
+}
+.departemen-section {
+    background: #fff;
+    padding: 60px 0 40px 0;
+    text-align: center;
+}
+.departemen-section h2 {
+    color: #333;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.01em;
+    text-align: center;
+}
+.about-departments {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
+    justify-content: center;
+    align-items: stretch;
+    margin: 0 auto 2.5rem auto;
+    max-width: 1100px;
+    position: relative;
+    z-index: 2;
+}
+.dept-card {
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 4px 24px rgba(37,99,235,0.10), 0 1.5px 6px rgba(0,0,0,0.03);
+    padding: 2.2rem 1.5rem 2rem 1.5rem;
+    min-width: 200px;
+    max-width: 340px;
+    flex: 1 1 240px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1.5px solid #e0e7ff;
+    transition: box-shadow 0.3s, transform 0.3s, border 0.3s;
+}
+.dept-icon {
+    width: 54px;
+    height: 54px;
+    background: linear-gradient(135deg, #2563eb 0%, #764ba2 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.1rem;
+    margin-top: 0.2rem;
+    box-shadow: 0 2px 12px rgba(37,99,235,0.13);
+    color: #fff;
+    font-size: 1.5rem;
+    transition: background 0.3s, color 0.3s;
+}
+.dept-card h4 {
+    color: #222;
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin-bottom: 0.7rem;
+    letter-spacing: 0.01em;
+    text-align: center;
+}
+.dept-card p {
+    color: #444;
+    font-size: 1.02rem;
+    line-height: 1.7;
+    margin-bottom: 0;
+    margin-top: 0.2rem;
+    text-align: center;
+}
+.dept-card:hover {
+    box-shadow: 0 12px 36px rgba(37,99,235,0.16), 0 2px 8px rgba(0,0,0,0.06);
+    border: 1.5px solid #2563eb;
+    transform: translateY(-6px) scale(1.03);
+}
+.dept-card:hover .dept-icon {
+    background: #fff;
+    color: #2563eb;
+    border: 2px solid #2563eb;
+}
+@media (max-width: 900px) {
+    .about-departments {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+        align-items: center;
+    }
+    .dept-card {
+        max-width: 95vw;
+        min-width: 0;
+        padding: 2rem 1rem 1.5rem 1rem;
+    }
+}
+@media (max-width: 600px) {
+    .departemen-section h2 {
+        font-size: 1.3rem;
+    }
+    .about-departments {
+        grid-template-columns: 1fr;
+    }
+    .dept-card {
+        padding: 1.5rem 0.7rem 1rem 0.7rem;
+    }
+}
+
+.about-partners {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    justify-content: center;
+    text-align: center;
+}
+.about-partners img {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+    padding: 0.7rem 1.2rem;
+    height: 60px;
+    object-fit: contain;
+    transition: box-shadow 0.3s, transform 0.3s;
+    margin: 0 auto;
+}
+.about-partners img:hover {
+    box-shadow: 0 8px 32px rgba(37,99,235,0.13);
+    transform: translateY(-4px) scale(1.07);
+}
+.about-layanan-btn {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+.cta-button {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 1rem 2.2rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.2s;
+    text-decoration: none;
+    display: inline-block;
+    margin-top: 1.2rem;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+}
+.cta-button:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px) scale(1.05);
+}
+.about-contact {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    text-align: center;
+    display: inline-block;
+}
+.about-contact li {
+    color: #2563eb;
+    font-size: 1rem;
+    margin-bottom: 0.7rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    background: #fff;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.07);
+    justify-content: center;
+}
+.about-contact li i {
+    min-width: 20px;
+    font-size: 1.1rem;
+    margin-top: 3px;
+}
+@media (max-width: 900px) {
+    .pillar-cards {
+        grid-template-columns: 1fr 1fr;
+    }
+    .about-section .container {
+        margin-top: 20px;
+    }
+}
+@media (max-width: 600px) {
+    .about-hero h1 {
+        font-size: 2rem;
+    }
+    .about-section h2 {
+        font-size: 1.3rem;
+    }
+    .pillar-section h2 {
+        font-size: 1.5rem;
+    }
+    .pillar-cards {
+        grid-template-columns: 1fr;
+    }
+    .pillar-card {
+        padding: 2rem 1rem 1.5rem 1rem;
+    }
+    .about-section .container {
+        margin-top: 10px;
+    }
+}
+
+.about-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2.5rem;
+    justify-content: center;
+    align-items: stretch;
+    margin: 0 auto 2.5rem auto;
+    max-width: 1100px;
+    position: relative;
+    z-index: 2;
+}
+.about-card {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: 0 6px 32px rgba(37,99,235,0.10), 0 1.5px 6px rgba(0,0,0,0.03);
+    padding: 2.8rem 2.2rem 2.5rem 2.2rem;
+    min-width: 280px;
+    max-width: 420px;
+    flex: 1 1 340px;
+    text-align: center;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border: 1.5px solid #e0e7ff;
+    transition: box-shadow 0.3s, transform 0.3s, border 0.3s;
+}
+.about-card h2 {
+    color: #2563eb;
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1.2rem;
+    letter-spacing: 0.01em;
+    transition: color 0.3s;
+}
+.about-card p {
+    color: #333;
+    font-size: 1.13rem;
+    line-height: 1.8;
+    margin-bottom: 0;
+    margin-top: 0.5rem;
+}
+.about-card:hover {
+    box-shadow: 0 16px 48px rgba(37,99,235,0.16), 0 2px 8px rgba(0,0,0,0.06);
+    border: 1.5px solid #2563eb;
+    transform: translateY(-8px) scale(1.03);
+}
+.about-card:hover h2 {
+    color: #1d4ed8;
+}
+@media (max-width: 900px) {
+    .about-cards {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        align-items: center;
+    }
+    .about-card {
+        max-width: 95vw;
+        min-width: 0;
+        padding: 2rem 1rem 1.5rem 1rem;
+    }
+}
+
+.about-section .about-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 2.2rem;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 2.5rem auto;
+    max-width: 900px;
+}
+.about-section .about-card {
+    background: #fff;
+    border-radius: 22px;
+    box-shadow: 0 4px 24px rgba(37,99,235,0.10), 0 1.5px 6px rgba(0,0,0,0.03);
+    padding: 1.2rem 2.5rem 1.4rem 2.5rem;
+    min-width: 260px;
+    max-width: 900px;
+    width: 100%;
+    min-height: 140px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    position: relative;
+    padding-top: 2.2rem;
+}
+.about-section .about-card h3 {
+    position: static;
+    margin-bottom: 0.2rem;
+    left: unset;
+    top: unset;
+    background: linear-gradient(90deg, #2563eb 60%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-size: 1.45rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    min-width: 0;
+    text-align: left;
+    padding-right: 0;
+    z-index: 2;
+    transition: color 0.3s;
+}
+.about-section .about-card .about-divider {
+    position: static;
+    width: 100%;
+    height: 2px;
+    background: rgba(37,99,235,0.15);
+    border-radius: 2px;
+    margin: 1.1rem 0 1.2rem 0;
+}
+.about-section .about-card p {
+    margin-top: 0;
+    text-align: center;
+    width: 100%;
+    font-size: 1.13rem;
+    color: #444;
+    line-height: 1.85;
+    letter-spacing: 0.01em;
+    font-family: 'Poppis' sans-serif;
+    font-weight: 400;
+}
+.about-section .about-card:nth-child(1) { animation-delay: 0.1s; }
+.about-section .about-card:nth-child(2) { animation-delay: 0.3s; }
+.about-section .about-card:nth-child(3) { animation-delay: 0.5s; }
+@keyframes aboutFadeUp {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+.about-section .about-card:hover {
+    box-shadow: 0 16px 48px rgba(37,99,235,0.18), 0 4px 16px rgba(0,0,0,0.08);
+    transform: translateY(-8px) scale(1.025);
+    border: 1.5px solid #2563eb;
+}
+.about-section .about-card:hover h3 {
+    filter: brightness(1.15);
+}
+.about-section .about-card:hover p {
+    color: #222;
+}
+@media (max-width: 900px) {
+    .about-section .about-cards {
+        max-width: 98vw;
+        gap: 1.2rem;
+    }
+    .about-section .about-card {
+        padding: 0.8rem 1rem 1rem 1rem;
+    }
+    .about-section .about-card h3 {
+        font-size: 1.15rem;
+    }
+    .about-section .about-card .about-divider {
+        margin: 0.7rem 0 1rem 0;
+    }
+    .about-section .about-card p {
+        font-size: 1.01rem;
+    }
+}
+@media (max-width: 600px) {
+    .about-section .about-cards {
+        gap: 0.7rem;
+    }
+    .about-section .about-card {
+        padding: 0.6rem 0.5rem 0.7rem 0.5rem;
+    }
+    .about-section .about-card h3 {
+        font-size: 1.02rem;
+    }
+    .about-section .about-card .about-divider {
+        font-size: 0.50rem;
+        margin: 0.5rem 0 0.7rem 0;
+    }
+    .about-section .about-card p {
+        font-size: 0.83rem;
+    }
+} 
+@media (max-width: 600px) {
+    .container {
+        padding: 0 10px;
+    }
+    .about-hero {
+        padding: 120px 0 60px 0;
+    }
+    .about-hero h1 {
+        font-size: 1.5rem;
+    }
+    .about-hero-sub {
+        font-size: 1rem;
+    }
+    .about-section {
+        padding-top: 40px;
+        padding-bottom: 20px;
+    }
+    .about-cards {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    .about-card {
+        padding: 18px 10px;
+        font-size: 0.98rem;
+    }
+    .pillar-section {
+        padding: 40px 0 30px 0;
+    }
+    .pillar-section h2 {
+        font-size: 1.3rem;
+    }
+    .pillar-cards {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    .pillar-card {
+        padding: 18px 10px;
+    }
+    .departemen-section {
+        padding: 30px 0 20px 0;
+    }
+    .departemen-section h2 {
+        font-size: 1.2rem;
+    }
+    .about-departments {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+    .dept-card {
+        padding: 18px 10px;
+    }
+    .about-layanan-btn {
+        margin-top: 20px;
+    }
+    .cta-button {
+        width: 100%;
+        max-width: 300px;
+        font-size: 1rem;
+    }
+} 

@@ -1,0 +1,399 @@
+@import url('header.css');
+@import url('footer.css');
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background: url('/src/assets/images/baground.png') no-repeat center center;
+    background-size: cover;
+    background-attachment: fixed;
+    color: #222;
+}
+
+.header-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.3);
+    z-index: 999;
+    transition: 0.3s;
+}
+.header-overlay.active {
+    display: block;
+}
+
+@media (max-width: 768px) {
+    .nav-menu {
+        position: fixed;
+        left: auto;
+        right: -100%;
+        top: 0;
+        height: 100vh;
+        width: 80vw;
+        max-width: 350px;
+        background: #fff;
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 2rem 1.5rem;
+        transition: right 0.3s;
+        z-index: 1000;
+    }
+    .nav-menu.active {
+        right: 0;
+    }
+
+    .hamburger {
+        display: flex;
+    }
+
+    .hamburger.active .bar:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger.active .bar:nth-child(1) {
+        transform: translateY(8px) rotate(45deg);
+    }
+
+    .hamburger.active .bar:nth-child(3) {
+        transform: translateY(-8px) rotate(-45deg);
+    }
+
+    .nav-close {
+        display: block !important;
+        width: 100%;
+        text-align: right;
+        padding: 0.5rem 0.5rem 1rem 0;
+        font-size: 2rem;
+        cursor: pointer;
+        color: #2563eb;
+        border: none;
+        background: none;
+    }
+    .nav-close span {
+        font-size: 2.2rem;
+        font-weight: bold;
+        line-height: 1;
+        user-select: none;
+    }
+    .nav-menu.dropdown-active {
+        right: -80vw; /* atau -100% jika ingin keluar penuh */
+        transition: right 0.3s;
+        z-index: 999999;
+    }
+}
+/* header overlay */
+
+.cm-hero {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    color: #fff;
+    padding: 208px 0;
+    text-align: center;
+}
+
+
+.hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+.cm-hero h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 18px;
+}
+.cm-hero-sub {
+    font-size: 1.15rem;
+    margin-bottom: 30px;
+    opacity: 0.95;
+}
+.cm-cta {
+    display: inline-block;
+    background: #fff;
+    color: #764ba2;
+    padding: 14px 38px;
+    border-radius: 30px;
+    font-weight: 600;
+    font-size: 1.1rem;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
+    transition: background 0.3s, color 0.3s;
+    margin-top: 18px;
+}
+.cm-cta:hover {
+    background: #764ba2;
+    color: #fff;
+}
+
+.cm-why {
+    background: #fff;
+    padding: 70px 0 40px 0;
+}
+.cm-why h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    color: #222;
+}
+.cm-why-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.cm-why-item {
+    background: #f7fafd;
+    border: 2px solid #f7fafd; /* Menambahkan border default */
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08);
+    padding: 32px 24px;
+    flex: 1 1 260px;
+    min-width: 220px;
+    max-width: 320px;
+    text-align: center;
+    transition: box-shadow 0.3s, border-color 0.3s; /* Menambahkan transisi pada border */
+}
+
+.cm-why-item:hover {
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.16);
+    border-color: #764ba2; /* Ganti warna border saat hover */
+}
+
+
+.cm-why-item i {
+    font-size: 2.2rem;
+    color: #764ba2;
+    margin-bottom: 18px;
+}
+.cm-why-item h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.cm-why-item p {
+    font-size: 0.98rem;
+    color: #444;
+}
+
+.cm-pricing {
+    /* background: #f7fafd; */
+    padding: 70px 0 40px 0;
+}
+.cm-pricing h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2.5rem;
+    color: #222;
+}
+.cm-pricing-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 32px;
+    justify-content: center;
+    max-width: 1100px;
+    margin: 0 auto;
+}
+.cm-pricing-item {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 24px rgba(37, 99, 235, 0.08);
+    padding: 36px 28px 32px 28px;
+    flex: 1 1 260px;
+    min-width: 220px;
+    max-width: 320px;
+    text-align: center;
+    transition: box-shadow 0.3s;
+}
+.cm-pricing-item:hover {
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.16);
+}
+.cm-pricing-item h3 {
+    font-size: 1.15rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+.cm-price {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #764ba2;
+    margin-bottom: 18px;
+}
+.cm-pricing-item ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 18px;
+}
+.cm-pricing-item ul li {
+    font-size: 0.98rem;
+    color: #444;
+    margin-bottom: 6px;
+}
+.cm-order-btn {
+    display: inline-block;
+    background: #764ba2;
+    color: #fff;
+    padding: 10px 28px;
+    border-radius: 24px;
+    font-weight: 600;
+    font-size: 1rem;
+    text-decoration: none;
+    transition: background 0.3s, color 0.3s;
+}
+.cm-order-btn:hover {
+    background: #667eea;
+    color: #fff;
+}
+
+/* FAQ Section - Samakan dengan price.css */
+.cm-faq {
+    background: #fff;
+    padding: 85px 0;
+}
+.cm-faq .section-title {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 50px;
+}
+.faq-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+    .faq-grid {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+}
+.faq-item {
+    background: #f7fafd;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(37, 99, 235, 0.06);
+    margin-bottom: 0;
+    transition: box-shadow 0.3s, border 0.3s;
+    overflow: hidden;
+    border: 1.5px solid #e3e8f0;
+}
+.faq-item + .faq-item {
+    margin-top: 0;
+}
+.faq-item:hover, .faq-item.active {
+    box-shadow: 0 8px 32px rgba(37, 99, 235, 0.16);
+    border-color: #2563eb;
+}
+.faq-question {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+    padding: 22px 28px 18px 28px;
+    background: none;
+    transition: background 0.3s;
+}
+.faq-question h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #222;
+    margin: 0;
+}
+.faq-question .faq-icon {
+    margin-left: 18px;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s;
+}
+.faq-question .faq-icon i {
+    font-size: 1.2rem;
+    color: #764ba2;
+    transition: transform 0.3s, color 0.3s;
+}
+.faq-answer {
+    background: #f8fafc;
+    padding: 0 2rem;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    border-top: 1px solid #e2e8f0;
+    transform: translateY(10px);
+}
+.faq-answer p {
+    font-size: 0.98rem;
+    color: #444;
+    margin: 0 0 0 0;
+    padding: 1.5rem 0;
+}
+.faq-item.active .faq-answer {
+    padding: 0 2rem;
+    opacity: 1;
+    transform: translateY(0);
+}
+.faq-item.active .faq-question .faq-icon i {
+    transform: rotate(180deg);
+    color: #2563eb;
+}
+.faq-item.active .faq-question h3 {
+    color: #2563eb;
+}
+
+@media (max-width: 900px) {
+    .cm-why-list, .cm-pricing-list {
+        flex-direction: column;
+        gap: 18px;
+    }
+    .cm-why-item, .cm-pricing-item {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .cm-hero h1 {
+        font-size: 1.5rem;
+    }
+    .cm-hero-sub {
+        font-size: 1rem;
+        margin: 10px 10px;
+    }
+    .cm-why-list, .cm-pricing-list {
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .cm-why .cm-why-item p{
+        margin-top: 40px;
+    }
+    .cm-why-item, .cm-pricing-item {
+        padding: 18px 10px;
+        min-width: unset;
+        max-width: 100%;
+    }
+    .cm-why h2, .cm-pricing h2, .cm-faq h2 {
+        font-size: 1.2rem;
+    }
+    .cm-pricing-item h3 {
+        font-size: 1.1rem;
+    }
+    .cm-price {
+        font-size: 1rem;
+    }
+    .cm-order-btn {
+        width: 100%;
+        max-width: 300px;
+        font-size: 1rem;
+    }
+    .faq-grid {
+        gap: 10px;
+    }
+    .faq-question h3 {
+        font-size: 1rem;
+    }
+    .faq-answer p {
+        font-size: 0.95rem;
+    }
+} 
