@@ -170,6 +170,7 @@ body {
     box-shadow: 0 2px 8px rgba(37, 99, 235, 0.10);
     transition: background 0.3s, color 0.3s;
     text-decoration: none;
+    text-align: center;
 }
 .privasi-back-btn .cta-button:hover {
     background: #1242aa;

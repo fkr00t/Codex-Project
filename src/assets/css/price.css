@@ -1,5 +1,5 @@
-@import url('../css/header.css');
-@import url('../css/footer.css');
+@import url('header.css');
+@import url('footer.css');
 /* Reset dan Base Styles */
 * {
     margin: 0;
@@ -97,6 +97,22 @@ body {
         line-height: 1;
         user-select: none;
     }
+    .nav-menu.dropdown-active {
+        right: -80vw; /* atau -100% jika ingin keluar penuh */
+        transition: right 0.3s;
+        z-index: 999999;
+        
+    }
+    .nav-menu .dropdown-menu {
+        margin-left: 10px; /* geser seluruh box ke kanan */
+    }
+    .nav-menu .dropdown-menu li {
+        width: 100%;
+        text-align: left;
+        margin-left: -23px;
+        box-sizing: border-box;
+    }
+    
 }
 /* header overlay */
 
@@ -650,6 +666,14 @@ body {
     .faq-answer p {
         padding: 1rem 0;
         font-size: 0.95rem;
+    }
+    p {
+        font-size: 1rem;
+        line-height: 1.7;
+        padding-left: 16px;
+        padding-right: 16px;
+        text-align: left;
+        word-break: break-word;
     }
 }
 
