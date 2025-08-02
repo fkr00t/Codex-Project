@@ -92,6 +92,12 @@ body {
         transition: right 0.3s;
         z-index: 999999;
     }
+    .step-number {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto;
+    }
 }
 /* header overlay */
 
@@ -522,6 +528,9 @@ body {
         flex-direction: column;
         text-align: center;
     }
+    .step-number{
+        align-items: center;
+    }
 
     .cta-content h2 {
         font-size: 2rem;
@@ -649,6 +658,7 @@ body {
         width: 40px;
         height: 40px;
         font-size: 1rem;
+        align-items: center;
     }
     .faq-container {
         padding: 0 5px;
