@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
 const cors = require('cors');
 const compression = require('compression');
 const bodyParser = require('body-parser');
@@ -34,6 +35,11 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname)));
 // ✅ Serve src folder (gambar, JS, dll)
 app.use('/src', express.static(path.join(__dirname, 'src')));
+
+// Serve favicon.ico
+app.get('/favicon.ico', (req, res) => {
+    res.sendFile(path.join(__dirname, 'favicon.ico'));
+});
 
 // Vercel specific: Serve static files from root
 if (isVercel) {
@@ -246,7 +252,14 @@ app.get('/api/stats', (req, res) => {
 
 // Handle 404
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, 'index.html'));
+    // Cek apakah file ada
+    const filePath = path.join(__dirname, req.path);
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+        res.sendFile(filePath);
+    } else {
+        // Jika file tidak ada, serve index.html untuk SPA routing
+        res.status(404).sendFile(path.join(__dirname, 'index.html'));
+    }
 });
 
 // Error handler
