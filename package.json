@@ -4,9 +4,10 @@
   "description": "Codex.Project - Web Development Services",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "node server.js",
-    "build": "echo 'No build step required'",
+    "start": "node api/index.js",
+    "dev": "node api/index.js",
+    "build": "./vercel-build.sh",
+    "vercel-build": "./vercel-build.sh",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
