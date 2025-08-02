@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "name": "codex-project",
   "builds": [
     {
       "src": "server.js",
@@ -12,18 +13,16 @@
       "dest": "/server.js"
     },
     {
-      "src": "/src/(.*)",
-      "dest": "/src/$1"
-    },
-    {
       "src": "/(.*)",
-      "dest": "/server.js"
+      "dest": "/$1"
     }
   ],
   "env": {
-    "EMAIL_USER": "@email_user",
-    "EMAIL_PASS": "@email_pass",
-    "EMAIL_HOST": "@email_host",
-    "EMAIL_PORT": "@email_port"
+    "NODE_ENV": "production"
+  },
+  "functions": {
+    "server.js": {
+      "maxDuration": 30
+    }
   }
 } 

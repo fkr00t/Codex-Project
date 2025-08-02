@@ -100,21 +100,6 @@
     <div id="footer-placeholder"></div>
 
     <script src="../src/assets/include-header-footer.js"></script>
-    
-    <!--Start of Tawk.to Script-->
-    <script type="text/javascript">
-    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
-    (function(){
-    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
-    s1.async=true;
-    s1.src='https://embed.tawk.to/688e37d909ef001928d483b8/1j1lokb0a';
-    s1.charset='UTF-8';
-    s1.setAttribute('crossorigin','*');
-    s0.parentNode.insertBefore(s1,s0);
-    })();
-    </script>
-    <!--End of Tawk.to Script-->
-    
     <script>
         // Loading overlay hide on page load
         window.addEventListener('load', function() {
@@ -161,7 +146,39 @@
             }
         });
 
-        // Form submission handling dengan sanitasi
+        // Fungsi sanitasi untuk form contact
+        function sanitizeFormInput(input) {
+            if (!input) return '';
+            
+            // Hapus karakter berbahaya
+            const dangerousPatterns = [
+                /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+                /javascript:/gi,
+                /on\w+\s*=/gi,
+                /<iframe/gi,
+                /<object/gi,
+                /<embed/gi,
+                /<form/gi,
+                /<input/gi,
+                /<textarea/gi,
+                /<select/gi,
+                /<button/gi
+            ];
+            
+            let sanitized = input.toString();
+            dangerousPatterns.forEach(pattern => {
+                sanitized = sanitized.replace(pattern, '');
+            });
+            
+            // Batasi panjang
+            if (sanitized.length > 1000) {
+                sanitized = sanitized.substring(0, 1000);
+            }
+            
+            return sanitized.trim();
+        }
+
+        // Form submission handling
         const contactForm = document.getElementById('contactForm');
         if (contactForm) {
             contactForm.addEventListener('submit', async function(e) {
@@ -176,73 +193,32 @@
                 try {
                     const formData = new FormData(this);
                     
-                    // Sanitasi dan validasi input
-                    const sanitizeInput = (input) => {
-                        if (!input) return '';
-                        return input.toString()
-                            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-                            .replace(/<[^>]*>/g, '')
-                            .replace(/javascript:/gi, '')
-                            .replace(/on\w+\s*=/gi, '')
-                            .trim();
+                    // Sanitasi semua input
+                    const data = {
+                        name: sanitizeFormInput(formData.get('name')),
+                        email: sanitizeFormInput(formData.get('email')),
+                        whatsapp: sanitizeFormInput(formData.get('whatsapp')),
+                        message: sanitizeFormInput(formData.get('message'))
                     };
                     
-                    const validateEmail = (email) => {
-                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                        return emailRegex.test(email);
-                    };
-                    
-                    const validateWhatsApp = (whatsapp) => {
-                        const whatsappRegex = /^[0-9]{10,15}$/;
-                        return whatsappRegex.test(whatsapp);
-                    };
-                    
-                    // Ambil dan sanitasi data
-                    const rawName = formData.get('name');
-                    const rawEmail = formData.get('email');
-                    const rawWhatsapp = formData.get('whatsapp');
-                    const rawMessage = formData.get('message');
-                    
-                    const name = sanitizeInput(rawName);
-                    const email = sanitizeInput(rawEmail);
-                    const whatsapp = sanitizeInput(rawWhatsapp);
-                    const message = sanitizeInput(rawMessage);
-                    
-                    // Validasi data
-                    if (!name || name.length < 2) {
-                        throw new Error('Nama harus diisi minimal 2 karakter');
+                    // Validasi email
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(data.email)) {
+                        alert('Format email tidak valid!');
+                        return;
                     }
                     
-                    if (!email || !validateEmail(email)) {
-                        throw new Error('Email tidak valid');
+                    // Validasi nama
+                    if (data.name.length < 2) {
+                        alert('Nama harus minimal 2 karakter!');
+                        return;
                     }
                     
-                    if (!whatsapp || !validateWhatsApp(whatsapp)) {
-                        throw new Error('Nomor WhatsApp tidak valid (minimal 10 digit)');
+                    // Validasi pesan
+                    if (data.message.length < 10) {
+                        alert('Pesan harus minimal 10 karakter!');
+                        return;
                     }
-                    
-                    if (!message || message.length < 10) {
-                        throw new Error('Pesan harus diisi minimal 10 karakter');
-                    }
-                    
-                    // Batasi panjang input
-                    if (name.length > 100) {
-                        throw new Error('Nama terlalu panjang (maksimal 100 karakter)');
-                    }
-                    
-                    if (email.length > 100) {
-                        throw new Error('Email terlalu panjang');
-                    }
-                    
-                    if (whatsapp.length > 15) {
-                        throw new Error('Nomor WhatsApp terlalu panjang');
-                    }
-                    
-                    if (message.length > 1000) {
-                        throw new Error('Pesan terlalu panjang (maksimal 1000 karakter)');
-                    }
-                    
-                    const data = { name, email, whatsapp, message };
                     
                     // Kirim data ke API
                     const response = await fetch('/api/contact', {
@@ -264,7 +240,7 @@
                     
                 } catch (error) {
                     console.error('Error:', error);
-                    alert(error.message || 'Terjadi kesalahan saat mengirim pesan. Silakan coba lagi nanti.');
+                    alert('Terjadi kesalahan saat mengirim pesan. Silakan coba lagi nanti.');
                 } finally {
                     // Reset button state
                     submitBtn.textContent = originalText;

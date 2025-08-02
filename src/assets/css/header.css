@@ -56,15 +56,14 @@
     color: #111;
     font-family: 'Poppins', sans-serif;
     font-weight: 550;
-    font-size: 0.9rem;
+    font-size: 0.9rm;
     letter-spacing: 0.02em;
     text-transform: capitalize;
     margin-bottom: auto;
-    transition: all 0.3s ease;
+    transition: color 0.2s,;
     border-bottom: 2.5px solid transparent;
     position: relative;
     background: none;
-    padding: 8px 0;
 }
 
 .nav-link:hover {
@@ -81,39 +80,6 @@
     border-bottom: 2.5px solid #2563eb;
     background: none;
     transition: all 0.3s ease;
-    position: relative;
-}
-
-.nav-link.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 0;
-    width: 100%;
-    height: 2.5px;
-    background-color: #2563eb;
-    border-radius: 1px;
-}
-
-/* Perbaikan untuk mobile - garis biru tidak terlalu panjang */
-@media (max-width: 768px) {
-    .nav-link.active::after {
-        width: 100%;
-        left: 0;
-        right: auto;
-        margin: 0;
-    }
-    
-    /* Khusus untuk dropdown toggle, jangan tampilkan underline */
-    .dropdown .nav-link.active::after {
-        display: none;
-    }
-}
-
-/* Tambahan untuk memastikan active state terlihat jelas */
-.nav-link.active:hover {
-    color: #2563eb !important;
-    border-bottom: 2.5px solid #2563eb;
 }
 
 .dropdown-menu {
@@ -135,128 +101,6 @@
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
-}
-
-/* Submenu untuk mobile saja - desktop tidak terpengaruh */
-@media (max-width: 768px) {
-    /* Sembunyikan dropdown di mobile */
-    .dropdown {
-        display: none !important;
-    }
-    
-    /* Tampilkan button Layanan untuk mobile */
-    .layanan-mobile {
-        display: block !important;
-    }
-    
-    /* Styling untuk button Layanan mobile */
-    .layanan-mobile .nav-link {
-        color: #111;
-        font-weight: 550;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-    
-    .layanan-mobile .nav-link.active {
-        color: #2563eb !important;
-        font-weight: 700;
-    }
-    
-    .layanan-mobile .nav-link.active::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 100%;
-        height: 2.5px;
-        background-color: #2563eb;
-        border-radius: 1px;
-    }
-    
-    .submenu {
-        margin-left: 15px;
-        position: relative;
-    }
-    
-    .submenu-link {
-        padding-left: 1.5rem !important;
-        font-size: 0.9rem;
-        color: #333;
-        border-left: 2px solid transparent;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-    
-    .submenu-link::before {
-        content: '•';
-        position: absolute;
-        left: 0.3rem;
-        color: #2563eb;
-        font-size: 1.2rem;
-        font-weight: bold;
-    }
-    
-    .submenu-link:hover {
-        background: #f8f9fa;
-        border-left-color: #2563eb;
-        color: #2563eb;
-    }
-    
-    .submenu-link.active {
-        color: #2563eb !important;
-        border-left-color: #2563eb;
-        background: #f8f9fa;
-    }
-    
-    .submenu-link.active::before {
-        color: #2563eb;
-    }
-}
-
-/* Desktop tetap menggunakan dropdown seperti sebelumnya */
-@media (min-width: 769px) {
-    .submenu {
-        display: none;
-    }
-    
-    .submenu-link {
-        display: none;
-    }
-    
-    /* Sembunyikan button Layanan mobile di desktop */
-    .layanan-mobile {
-        display: none;
-    }
-    
-    /* Pastikan dropdown desktop tetap berfungsi */
-    .dropdown-menu {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        background: #fff;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        border-radius: 8px;
-        padding: 1rem 0;
-        min-width: 200px;
-        opacity: 0;
-        visibility: hidden;
-        transform: translateY(-10px);
-        transition: all 0.3s ease;
-        max-height: none;
-        overflow: visible;
-    }
-    
-    .dropdown:hover .dropdown-menu {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
-    
-    .dropdown.open .dropdown-menu {
-        opacity: 1;
-        visibility: visible;
-        transform: translateY(0);
-    }
 }
 
 .dropdown-menu li {
@@ -328,26 +172,6 @@ body.menu-open {
         padding: 2rem 1.5rem;
         transition: right 0.3s;
         z-index: 1000;
-    }
-    
-    .nav-link.active {
-        color: #2563eb !important;
-        font-weight: 700;
-        border-bottom: 2.5px solid #2563eb;
-        background: none;
-        transition: all 0.3s ease;
-        position: relative;
-    }
-    
-    .nav-link.active::after {
-        content: '';
-        position: absolute;
-        bottom: -2px;
-        left: 0;
-        width: 100%;
-        height: 2.5px;
-        background-color: #2563eb;
-        border-radius: 1px;
     }
     .nav-menu.active {
         right: 0;
@@ -439,4 +263,114 @@ body.menu-open {
 .logo-secondary {
     color: #b3b3b3;
     font-weight: 500;
+}
+
+/* ===== MOBILE MENU STYLING ===== */
+
+/* Submenu untuk mobile saja - desktop tidak terpengaruh */
+@media (max-width: 768px) {
+    /* Sembunyikan dropdown di mobile */
+    .dropdown {
+        display: none !important;
+    }
+    
+    /* Tampilkan button Layanan untuk mobile */
+    .layanan-mobile {
+        display: block !important;
+    }
+    
+    .submenu {
+        margin-left: 15px;
+        position: relative;
+    }
+    
+    .submenu-link {
+        padding-left: 1.5rem !important;
+        font-size: 0.9rem;
+        color: #333;
+        border-left: 2px solid transparent;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+    
+    .submenu-link::before {
+        content: '•';
+        position: absolute;
+        left: 0.3rem;
+        color: #2563eb;
+        font-size: 1.2rem;
+        font-weight: bold;
+    }
+    
+    .submenu-link:hover {
+        background: #f8f9fa;
+        border-left-color: #2563eb;
+        color: #2563eb;
+    }
+    
+    .submenu-link.active {
+        color: #2563eb !important;
+        border-left-color: #2563eb;
+        background: #f8f9fa;
+    }
+    
+    .submenu-link.active::before {
+        color: #2563eb;
+    }
+}
+
+/* Desktop tetap menggunakan dropdown seperti sebelumnya */
+@media (min-width: 769px) {
+    .submenu {
+        display: none !important;
+    }
+    
+    .submenu-link {
+        display: none !important;
+    }
+    
+    /* Sembunyikan button Layanan mobile di desktop */
+    .layanan-mobile {
+        display: none !important;
+    }
+    
+    /* Pastikan dropdown desktop tetap berfungsi */
+    .dropdown {
+        display: block !important;
+    }
+    
+    .dropdown .nav-link {
+        display: flex !important;
+        align-items: center;
+    }
+    
+    /* Pastikan dropdown desktop tetap berfungsi */
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        background: #fff;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        border-radius: 8px;
+        padding: 1rem 0;
+        min-width: 200px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+        max-height: none;
+        overflow: visible;
+    }
+    
+    .dropdown:hover .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+    
+    .dropdown.open .dropdown-menu {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
 }

@@ -5,10 +5,12 @@ const cors = require('cors');
 const compression = require('compression');
 const bodyParser = require('body-parser');
 const nodemailer = require('nodemailer');
-const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Vercel specific configuration
+const isVercel = process.env.VERCEL === '1';
 
 // Konfigurasi Nodemailer untuk Zoho Mail
 const transporter = nodemailer.createTransport({
@@ -19,18 +21,6 @@ const transporter = nodemailer.createTransport({
         user: process.env.EMAIL_USER || 'your-email@zoho.com',
         pass: process.env.EMAIL_PASS || 'your-zoho-password'
     }
-});
-
-// Rate limiting untuk mencegah spam
-const contactLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 menit
-    max: 5, // maksimal 5 request per IP
-    message: {
-        success: false,
-        message: 'Terlalu banyak request. Silakan coba lagi dalam 15 menit.'
-    },
-    standardHeaders: true,
-    legacyHeaders: false,
 });
 
 // Middleware
@@ -45,99 +35,80 @@ app.use(express.static(path.join(__dirname)));
 // ✅ Serve src folder (gambar, JS, dll)
 app.use('/src', express.static(path.join(__dirname, 'src')));
 
+// Vercel specific: Serve static files from root
+if (isVercel) {
+    app.use('/', express.static(path.join(__dirname)));
+}
+
 // Routes
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// API endpoint untuk form kontak dengan rate limiting
-app.post('/api/contact', contactLimiter, async (req, res) => {
+// Fungsi sanitasi server-side
+function sanitizeInput(input) {
+    if (!input) return '';
+    
+    // Hapus karakter berbahaya
+    const dangerousPatterns = [
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+        /javascript:/gi,
+        /on\w+\s*=/gi,
+        /<iframe/gi,
+        /<object/gi,
+        /<embed/gi,
+        /<form/gi,
+        /<input/gi,
+        /<textarea/gi,
+        /<select/gi,
+        /<button/gi
+    ];
+    
+    let sanitized = input.toString();
+    dangerousPatterns.forEach(pattern => {
+        sanitized = sanitized.replace(pattern, '');
+    });
+    
+    return sanitized.trim();
+}
+
+// API endpoint untuk form kontak
+app.post('/api/contact', async (req, res) => {
     const { name, email, whatsapp, message } = req.body;
 
-    // Sanitasi server-side
-    const sanitizeInput = (input) => {
-        if (!input) return '';
-        return input.toString()
-            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-            .replace(/<[^>]*>/g, '')
-            .replace(/javascript:/gi, '')
-            .replace(/on\w+\s*=/gi, '')
-            .replace(/[<>]/g, '')
-            .trim();
-    };
-
-    // Validasi server-side
-    const validateEmail = (email) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return emailRegex.test(email);
-    };
-
-    const validateWhatsApp = (whatsapp) => {
-        const whatsappRegex = /^[0-9]{10,15}$/;
-        return whatsappRegex.test(whatsapp);
-    };
-
-    // Sanitasi data
+    if (!name || !email || !message) {
+        return res.status(400).json({
+            success: false,
+            message: 'Mohon lengkapi semua field yang diperlukan'
+        });
+    }
+    
+    // Sanitasi input server-side
     const sanitizedName = sanitizeInput(name);
     const sanitizedEmail = sanitizeInput(email);
     const sanitizedWhatsapp = sanitizeInput(whatsapp);
     const sanitizedMessage = sanitizeInput(message);
-
-    // Validasi data
-    if (!sanitizedName || sanitizedName.length < 2) {
+    
+    // Validasi tambahan
+    if (sanitizedName.length < 2) {
         return res.status(400).json({
             success: false,
-            message: 'Nama harus diisi minimal 2 karakter'
+            message: 'Nama harus minimal 2 karakter'
         });
     }
-
-    if (!sanitizedEmail || !validateEmail(sanitizedEmail)) {
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(sanitizedEmail)) {
         return res.status(400).json({
             success: false,
-            message: 'Email tidak valid'
+            message: 'Format email tidak valid'
         });
     }
-
-    if (!sanitizedWhatsapp || !validateWhatsApp(sanitizedWhatsapp)) {
+    
+    if (sanitizedMessage.length < 10) {
         return res.status(400).json({
             success: false,
-            message: 'Nomor WhatsApp tidak valid (minimal 10 digit)'
-        });
-    }
-
-    if (!sanitizedMessage || sanitizedMessage.length < 10) {
-        return res.status(400).json({
-            success: false,
-            message: 'Pesan harus diisi minimal 10 karakter'
-        });
-    }
-
-    // Batasi panjang input
-    if (sanitizedName.length > 100) {
-        return res.status(400).json({
-            success: false,
-            message: 'Nama terlalu panjang (maksimal 100 karakter)'
-        });
-    }
-
-    if (sanitizedEmail.length > 100) {
-        return res.status(400).json({
-            success: false,
-            message: 'Email terlalu panjang'
-        });
-    }
-
-    if (sanitizedWhatsapp.length > 15) {
-        return res.status(400).json({
-            success: false,
-            message: 'Nomor WhatsApp terlalu panjang'
-        });
-    }
-
-    if (sanitizedMessage.length > 1000) {
-        return res.status(400).json({
-            success: false,
-            message: 'Pesan terlalu panjang (maksimal 1000 karakter)'
+            message: 'Pesan harus minimal 10 karakter'
         });
     }
 
@@ -288,6 +259,11 @@ app.use((err, req, res, next) => {
 });
 
 // Start server
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server berjalan di http://0.0.0.0:${PORT}`);
-});
+if (!isVercel) {
+    app.listen(PORT, '0.0.0.0', () => {
+        console.log(`Server berjalan di http://0.0.0.0:${PORT}`);
+    });
+}
+
+// Export for Vercel
+module.exports = app;

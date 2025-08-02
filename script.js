@@ -93,9 +93,174 @@ faqCards.forEach(card => {
   }
 });
 
+// Chat Widget Toggle
+const chatButton = document.querySelector('.chat-button');
+const chatPopup = document.querySelector('.chat-popup');
+const closeChat = document.querySelector('.close-chat');
+if (chatButton && chatPopup && closeChat) {
+  chatButton.addEventListener('click', () => {
+    chatPopup.classList.toggle('active');
+  });
+  closeChat.addEventListener('click', () => {
+    chatPopup.classList.remove('active');
+  });
+  document.addEventListener('click', (e) => {
+    if (!chatButton.contains(e.target) && !chatPopup.contains(e.target)) {
+      chatPopup.classList.remove('active');
+    }
+  });
+}
 
+// === Chat Widget Auto-Reply ===
+(function() {
+  const chatInput = document.querySelector('.chat-input input');
+  const chatSendBtn = document.querySelector('.chat-input button');
+  const chatBody = document.querySelector('.chat-body');
 
+  // Fungsi untuk sanitasi input (mencegah XSS)
+  function sanitizeInput(input) {
+    const div = document.createElement('div');
+    div.textContent = input;
+    return div.innerHTML;
+  }
 
+  // Fungsi untuk menambah pesan ke chat
+  function addMessage(text, sender = 'user') {
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'chat-message ' + sender;
+    
+    // Sanitasi input untuk mencegah XSS
+    const sanitizedText = sanitizeInput(text);
+    msgDiv.innerHTML = `<p>${sanitizedText}</p>`;
+    
+    chatBody.appendChild(msgDiv);
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+
+  // Fungsi auto-reply sederhana
+  function getBotReply(message) {
+    const msg = message.toLowerCase();
+    if (msg.includes('halo') || msg.includes('hai') || msg.includes('hello') || msg.includes('assalamualaikum')) {
+      return 'Halo! Ada yang bisa kami bantu?';
+    } else if (msg.includes('harga') || msg.includes('biaya') || msg.includes('tarif') || msg.includes('ongkos')) {
+      return 'Untuk informasi harga layanan kami, silakan kunjungi halaman price atau chat langsung dengan admin kami. Kami siap membantu!';
+    } else if (msg.includes('kontak') || msg.includes('hubungi') || msg.includes('nomor') || msg.includes('wa') || msg.includes('whatsapp') || msg.includes('nomer')) {
+      return 'Anda bisa menghubungi kami melalui WhatsApp di +62 882-3058-4013, email support@codexproject.dev, atau di instagram codex.project_';
+    } else if (msg.includes('alamat') || msg.includes('lokasi') || msg.includes('dimana')) {
+      return 'Alamat kantor kami: Jl. Mawar Gg Coklat, Desa Biting, Kec.Arjasa, Kab.Jember, Indonesia.';
+    } else if (msg.includes('layanan') || msg.includes('jasa') || msg.includes('service')) {
+      return 'Kami menyediakan layanan seperti pembuatan website, pengembangan brand, content marketing, dan optimasi website. Ada yang ingin ditanyakan lebih lanjut?';
+    } else if (msg.includes('portofolio') || msg.includes('contoh') || msg.includes('hasil')) {
+      return 'Portofolio kami bisa dilihat di halaman Portofolio. Kami telah membantu banyak klien dari berbagai bidang.';
+    } else if (msg.includes('bisa apa') || msg.includes('keunggulan') || msg.includes('kenapa pilih')) {
+      return 'Kami menawarkan layanan profesional, support responsif, dan hasil berkualitas tinggi untuk mendukung bisnis Anda.';
+    } else if (msg.includes('terima kasih') || msg.includes('thanks') || msg.includes('makasih')) {
+      return 'Sama-sama! Jika ada pertanyaan lain, silakan chat kembali.';
+    } else if (msg.includes('keamanan') || msg.includes('seo') || msg.includes('maintenence') || msg.includes('website')) {
+      return 'Iya! ada layanan tersebut, jika berminat langsung chat saja pada admin.';
+    } else if (msg.includes('skripsi') || msg.includes('tesis') || msg.includes('joki')) {
+      return 'Ya! kami bisa membuatkan ada Tesis/Skripsi. Silhkan buka pada halaman Content Marketing untuk harganya';
+    } else if (msg.includes('promo') || msg.includes('diskon') || msg.includes('potongan')) {
+      return 'Untuk promo atau diskon terbaru, silakan cek halaman utama atau hubungi admin kami.';
+    } else if (msg.includes('cara pesan') || msg.includes('order') || msg.includes('pesan')) {
+      return 'Untuk memesan layanan, Anda bisa mengisi form kontak atau chat langsung dengan admin kami.';
+    } else if (msg.includes('buka jam berapa') || msg.includes('jam operasional') || msg.includes('jam kerja')) {
+      return 'Jam operasional kami: Senin - Sabtu, 08.00 - 17.00 WIB.';
+    } else {
+      return 'Jika ingin jawaban cepat, silakan hubungi admin kami yang ada pada halaman kontak.';
+    }
+  }
+
+  // Validasi input untuk mencegah script injection
+  function validateInput(input) {
+    // Hapus karakter berbahaya
+    const dangerousPatterns = [
+      /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+      /javascript:/gi,
+      /on\w+\s*=/gi,
+      /<iframe/gi,
+      /<object/gi,
+      /<embed/gi,
+      /<form/gi,
+      /<input/gi,
+      /<textarea/gi,
+      /<select/gi,
+      /<button/gi
+    ];
+    
+    let sanitized = input;
+    dangerousPatterns.forEach(pattern => {
+      sanitized = sanitized.replace(pattern, '');
+    });
+    
+    // Batasi panjang pesan
+    if (sanitized.length > 500) {
+      sanitized = sanitized.substring(0, 500);
+    }
+    
+    return sanitized;
+  }
+
+  // Kirim pesan saat tombol diklik atau enter ditekan
+  function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+    
+    // Validasi dan sanitasi input
+    const validatedText = validateInput(text);
+    if (validatedText !== text) {
+      console.warn('Input berbahaya terdeteksi dan telah dibersihkan');
+    }
+    
+    addMessage(validatedText, 'user');
+    chatInput.value = '';
+    setTimeout(() => {
+      const reply = getBotReply(validatedText);
+      addMessage(reply, 'bot');
+    }, 600);
+  }
+
+  if (chatSendBtn && chatInput && chatBody) {
+    chatSendBtn.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  }
+})();
+
+(function () {
+  const chatInput = document.querySelector('.chat-input input');
+  const chatPopup = document.querySelector('.chat-popup');
+
+  if (!chatInput || !chatPopup) return;
+
+  function updateChatPosition() {
+    if (window.visualViewport) {
+      const viewportHeight = window.visualViewport.height;
+      const windowHeight = window.innerHeight;
+
+      const keyboardHeight = windowHeight - viewportHeight;
+
+      // Jika keyboard muncul (viewport jadi lebih pendek)
+      if (keyboardHeight > 600) {
+        chatPopup.style.bottom = (keyboardHeight + 20) + 'px';
+      } else {
+        chatPopup.style.bottom = '70px';
+      }
+    }
+  }
+
+  // Jalankan saat input difokuskan
+  chatInput.addEventListener('focus', updateChatPosition);
+  chatInput.addEventListener('blur', updateChatPosition);
+
+  // Tambahan: update saat viewport berubah
+  if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', updateChatPosition);
+  }
+})();
 
 // Smooth scrolling for navigation links
 if (document.querySelectorAll('a[href^="#"]').length) {
