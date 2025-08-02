@@ -73,71 +73,163 @@
     </main>
     <div id="footer-placeholder"></div>
     <script src="assets/include-header-footer.js"></script>
-    <script src="../script.js"></script>
+    <script src="../src/assets/include-header-footer.js"></script>
+    
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/688e37d909ef001928d483b8/1j1lokb0a';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+    
     <script>
         // Loading overlay hide on page load
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
         window.addEventListener('load', function() {
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
           var overlay = document.getElementById('loading-overlay');
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
           if (overlay) {
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
             overlay.style.opacity = '0';
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
             overlay.style.pointerEvents = 'none';
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
             setTimeout(function() {
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
               overlay.style.display = 'none';
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
             }, 400);
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
+        });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
           }
         });
         // Load header
-        fetch('../header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header-placeholder').innerHTML = data;
-            // Inisialisasi menu mobile jika diperlukan
-            const hamburger = document.querySelector('.hamburger');
-            const navMenu = document.querySelector('.nav-menu');
-            if (hamburger && navMenu) {
-                hamburger.addEventListener('click', () => {
-                    hamburger.classList.toggle('active');
-                    navMenu.classList.toggle('active');
-                });
-                document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', function() {
-                    // Menghapus kelas 'active' dari semua elemen nav-link
-                    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                    // Menambahkan kelas 'active' pada nav-link yang diklik
-    
-                    // Menutup menu setelah mengklik salah satu link di tampilan mobile
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                }));
-            }
-            setTimeout(() => {
-                if (window.activateMenu) window.activateMenu();
-            }, 300);
-            const navClose = document.querySelector('.nav-close');
-            const headerOverlay = document.querySelector('.header-overlay');
-            if (navClose && hamburger && navMenu && headerOverlay) {
-              navClose.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-                headerOverlay.classList.remove('active');
-                document.body.classList.remove('menu-open');
-              });
-            } else if (navClose && hamburger && navMenu) {
-              navClose.addEventListener('click', () => {
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-                document.body.classList.remove('menu-open');
-              });
-            }
-        })
-        .catch(err => console.error('Error loading header:', err));
     
         // Memuat footer
-        fetch('../footer.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('footer-placeholder').innerHTML = data;
-        })
-        .catch(err => console.error('Error loading footer:', err));
         
     </script>
 </body>

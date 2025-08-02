@@ -6,7 +6,7 @@
 - **Responsive**: Optimal di semua perangkat (desktop, tablet, mobile)
 - **Interactive Elements**: Animasi smooth dan efek hover
 - **Contact Form**: Form kontak yang fungsional
-- **Chat Widget**: Widget chat untuk customer service
+
 - **FAQ Section**: Accordion untuk pertanyaan umum
 - **Testimonials**: Testimoni klien dengan layout yang menarik
 - **Statistics Counter**: Animasi counter untuk statistik
@@ -125,7 +125,7 @@ Website ini responsive dan optimal di:
 
 - **Mobile Menu**: Hamburger menu untuk mobile
 - **FAQ Accordion**: Expand/collapse pertanyaan
-- **Chat Widget**: Popup chat untuk customer service
+
 - **Form Validation**: Validasi form kontak
 - **Scroll Animations**: Animasi saat scroll
 - **Counter Animation**: Animasi angka statistik

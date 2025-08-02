@@ -99,7 +99,22 @@
     </main>
     <div id="footer-placeholder"></div>
 
-    <script src="../script.js"></script>
+    <script src="../src/assets/include-header-footer.js"></script>
+    
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/688e37d909ef001928d483b8/1j1lokb0a';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+    
     <script>
         // Loading overlay hide on page load
         window.addEventListener('load', function() {
@@ -112,50 +127,20 @@
             }, 400);
           }
         });
-        // Load header
-        fetch('../header.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('header-placeholder').innerHTML = data;
-            // Inisialisasi menu mobile jika diperlukan
-            const hamburger = document.querySelector('.hamburger');
-            const navMenu = document.querySelector('.nav-menu');
-            if (hamburger && navMenu) {
-                hamburger.addEventListener('click', () => {
-                    hamburger.classList.toggle('active');
-                    navMenu.classList.toggle('active');
-                });
-                document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', function() {
-                    // Menghapus kelas 'active' dari semua elemen nav-link
-                    document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                    // Menambahkan kelas 'active' pada nav-link yang diklik
-    
-                    // Menutup menu setelah mengklik salah satu link di tampilan mobile
-                    hamburger.classList.remove('active');
-                    navMenu.classList.remove('active');
-                }));
-            }
-            setTimeout(() => {
-                if (window.activateMenu) window.activateMenu();
-            }, 300);
-            const navClose = document.querySelector('.nav-close');
-        if (navClose) {
-          navClose.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            document.body.classList.remove('menu-open');
-          });
-        }
-        })
-        .catch(err => console.error('Error loading header:', err));
-    
-        // Memuat footer
-        fetch('../footer.html')
-        .then(response => response.text())
-        .then(data => {
-            document.getElementById('footer-placeholder').innerHTML = data;
-        })
-        .catch(err => console.error('Error loading footer:', err));
+        // Load header dan footer menggunakan includeHTML
+        document.addEventListener('DOMContentLoaded', function() {
+            includeHTML('#header-placeholder', '../header.html', function() {
+                console.log('Header Loaded ✅');
+                setTimeout(() => {
+                    activateMenu();
+                    initMobileNavbar();
+                }, 100);
+            });
+            
+            includeHTML('#footer-placeholder', '../footer.html', function() {
+                console.log('Footer Loaded ✅');
+            });
+        });
         
 
         // Animasi typewriter untuk judul contact-hero
@@ -176,23 +161,116 @@
             }
         });
 
-        // Form submission handling
-        // Hapus deklarasi ganda, gunakan satu saja
-        if (typeof contactForm === 'undefined') {
-            const contactForm = document.getElementById('contactForm');
-            if (contactForm) {
-                contactForm.addEventListener('submit', function(e) {
-                    e.preventDefault();
+        // Form submission handling dengan sanitasi
+        const contactForm = document.getElementById('contactForm');
+        if (contactForm) {
+            contactForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Tampilkan loading state
+                const submitBtn = this.querySelector('.submit-btn');
+                const originalText = submitBtn.textContent;
+                submitBtn.textContent = 'Mengirim...';
+                submitBtn.disabled = true;
+                
+                try {
                     const formData = new FormData(this);
-                    const name = formData.get('name');
-                    const email = formData.get('email');
-                    const tel = formData.get('whatsapp');
-                    const message = formData.get('message');
-                    // Here you would typically send the data to your server
-                    alert('Terima kasih! Pesan Anda telah terkirim. Kami akan segera menghubungi Anda.');
-                    this.reset();
-                });
-            }
+                    
+                    // Sanitasi dan validasi input
+                    const sanitizeInput = (input) => {
+                        if (!input) return '';
+                        return input.toString()
+                            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+                            .replace(/<[^>]*>/g, '')
+                            .replace(/javascript:/gi, '')
+                            .replace(/on\w+\s*=/gi, '')
+                            .trim();
+                    };
+                    
+                    const validateEmail = (email) => {
+                        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                        return emailRegex.test(email);
+                    };
+                    
+                    const validateWhatsApp = (whatsapp) => {
+                        const whatsappRegex = /^[0-9]{10,15}$/;
+                        return whatsappRegex.test(whatsapp);
+                    };
+                    
+                    // Ambil dan sanitasi data
+                    const rawName = formData.get('name');
+                    const rawEmail = formData.get('email');
+                    const rawWhatsapp = formData.get('whatsapp');
+                    const rawMessage = formData.get('message');
+                    
+                    const name = sanitizeInput(rawName);
+                    const email = sanitizeInput(rawEmail);
+                    const whatsapp = sanitizeInput(rawWhatsapp);
+                    const message = sanitizeInput(rawMessage);
+                    
+                    // Validasi data
+                    if (!name || name.length < 2) {
+                        throw new Error('Nama harus diisi minimal 2 karakter');
+                    }
+                    
+                    if (!email || !validateEmail(email)) {
+                        throw new Error('Email tidak valid');
+                    }
+                    
+                    if (!whatsapp || !validateWhatsApp(whatsapp)) {
+                        throw new Error('Nomor WhatsApp tidak valid (minimal 10 digit)');
+                    }
+                    
+                    if (!message || message.length < 10) {
+                        throw new Error('Pesan harus diisi minimal 10 karakter');
+                    }
+                    
+                    // Batasi panjang input
+                    if (name.length > 100) {
+                        throw new Error('Nama terlalu panjang (maksimal 100 karakter)');
+                    }
+                    
+                    if (email.length > 100) {
+                        throw new Error('Email terlalu panjang');
+                    }
+                    
+                    if (whatsapp.length > 15) {
+                        throw new Error('Nomor WhatsApp terlalu panjang');
+                    }
+                    
+                    if (message.length > 1000) {
+                        throw new Error('Pesan terlalu panjang (maksimal 1000 karakter)');
+                    }
+                    
+                    const data = { name, email, whatsapp, message };
+                    
+                    // Kirim data ke API
+                    const response = await fetch('/api/contact', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(data)
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(result.message);
+                        this.reset();
+                    } else {
+                        alert('Error: ' + result.message);
+                    }
+                    
+                } catch (error) {
+                    console.error('Error:', error);
+                    alert(error.message || 'Terjadi kesalahan saat mengirim pesan. Silakan coba lagi nanti.');
+                } finally {
+                    // Reset button state
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                }
+            });
         }
         document.getElementById('whatsapp').addEventListener('input', function (e) {
             this.value = this.value.replace(/[^0-9]/g, '');

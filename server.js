@@ -1,11 +1,37 @@
+require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const cors = require('cors');
 const compression = require('compression');
 const bodyParser = require('body-parser');
+const nodemailer = require('nodemailer');
+const rateLimit = require('express-rate-limit');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+// Konfigurasi Nodemailer untuk Zoho Mail
+const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST || 'smtp.zoho.com',
+    port: process.env.EMAIL_PORT || 587,
+    secure: false, // true untuk 465, false untuk port lain
+    auth: {
+        user: process.env.EMAIL_USER || 'your-email@zoho.com',
+        pass: process.env.EMAIL_PASS || 'your-zoho-password'
+    }
+});
+
+// Rate limiting untuk mencegah spam
+const contactLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 menit
+    max: 5, // maksimal 5 request per IP
+    message: {
+        success: false,
+        message: 'Terlalu banyak request. Silakan coba lagi dalam 15 menit.'
+    },
+    standardHeaders: true,
+    legacyHeaders: false,
+});
 
 // Middleware
 app.use(cors());
@@ -24,30 +50,218 @@ app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'index.html'));
 });
 
-// API endpoint untuk form kontak
-app.post('/api/contact', (req, res) => {
-    const { name, company, email, phone, message } = req.body;
+// API endpoint untuk form kontak dengan rate limiting
+app.post('/api/contact', contactLimiter, async (req, res) => {
+    const { name, email, whatsapp, message } = req.body;
 
-    if (!name || !email || !message) {
+    // Sanitasi server-side
+    const sanitizeInput = (input) => {
+        if (!input) return '';
+        return input.toString()
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+            .replace(/<[^>]*>/g, '')
+            .replace(/javascript:/gi, '')
+            .replace(/on\w+\s*=/gi, '')
+            .replace(/[<>]/g, '')
+            .trim();
+    };
+
+    // Validasi server-side
+    const validateEmail = (email) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+    };
+
+    const validateWhatsApp = (whatsapp) => {
+        const whatsappRegex = /^[0-9]{10,15}$/;
+        return whatsappRegex.test(whatsapp);
+    };
+
+    // Sanitasi data
+    const sanitizedName = sanitizeInput(name);
+    const sanitizedEmail = sanitizeInput(email);
+    const sanitizedWhatsapp = sanitizeInput(whatsapp);
+    const sanitizedMessage = sanitizeInput(message);
+
+    // Validasi data
+    if (!sanitizedName || sanitizedName.length < 2) {
         return res.status(400).json({
             success: false,
-            message: 'Mohon lengkapi semua field yang diperlukan'
+            message: 'Nama harus diisi minimal 2 karakter'
+        });
+    }
+
+    if (!sanitizedEmail || !validateEmail(sanitizedEmail)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Email tidak valid'
+        });
+    }
+
+    if (!sanitizedWhatsapp || !validateWhatsApp(sanitizedWhatsapp)) {
+        return res.status(400).json({
+            success: false,
+            message: 'Nomor WhatsApp tidak valid (minimal 10 digit)'
+        });
+    }
+
+    if (!sanitizedMessage || sanitizedMessage.length < 10) {
+        return res.status(400).json({
+            success: false,
+            message: 'Pesan harus diisi minimal 10 karakter'
+        });
+    }
+
+    // Batasi panjang input
+    if (sanitizedName.length > 100) {
+        return res.status(400).json({
+            success: false,
+            message: 'Nama terlalu panjang (maksimal 100 karakter)'
+        });
+    }
+
+    if (sanitizedEmail.length > 100) {
+        return res.status(400).json({
+            success: false,
+            message: 'Email terlalu panjang'
+        });
+    }
+
+    if (sanitizedWhatsapp.length > 15) {
+        return res.status(400).json({
+            success: false,
+            message: 'Nomor WhatsApp terlalu panjang'
+        });
+    }
+
+    if (sanitizedMessage.length > 1000) {
+        return res.status(400).json({
+            success: false,
+            message: 'Pesan terlalu panjang (maksimal 1000 karakter)'
         });
     }
 
     console.log('Pesan baru diterima:');
-    console.log('Nama:', name);
-    console.log('Perusahaan:', company);
-    console.log('Email:', email);
-    console.log('Phone:', phone);
-    console.log('Pesan:', message);
+    console.log('Nama:', sanitizedName);
+    console.log('Email:', sanitizedEmail);
+    console.log('WhatsApp:', sanitizedWhatsapp);
+    console.log('Pesan:', sanitizedMessage);
 
-    setTimeout(() => {
+    try {
+        // Konfigurasi email
+        const mailOptions = {
+            from: process.env.EMAIL_USER || 'your-email@gmail.com',
+            to: 'support@codexproject.dev', // Email tujuan
+            subject: `Pesan Baru dari ${sanitizedName} - Codex.Project`,
+            html: `
+                <!DOCTYPE html>
+                <html lang="id">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Pesan Baru - Codex.Project</title>
+                </head>
+                <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+                    <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                        
+                        <!-- Header -->
+                        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px 30px; text-align: center;">
+                            <div style="background: rgba(255, 255, 255, 0.1); border-radius: 50%; width: 80px; height: 80px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center;">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z" fill="white"/>
+                                </svg>
+                            </div>
+                            <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.5px;">Pesan Baru</h1>
+                            <p style="color: rgba(255, 255, 255, 0.9); margin: 10px 0 0; font-size: 16px;">Codex.Project Contact Form</p>
+                        </div>
+
+                        <!-- Content -->
+                        <div style="padding: 40px 30px;">
+                            
+                            <!-- Sender Info Card -->
+                            <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 16px; padding: 30px; margin-bottom: 30px; border-left: 4px solid #667eea;">
+                                <h2 style="color: #2d3748; margin: 0 0 20px; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
+                                        <path d="M12 12C14.21 12 16 10.21 16 8C16 5.79 14.21 4 12 4C9.79 4 8 5.79 8 8C8 10.21 9.79 12 12 12ZM12 14C9.33 14 4 15.34 4 18V20H20V18C20 15.34 14.67 14 12 14Z" fill="#667eea"/>
+                                    </svg>
+                                    Detail Pengirim
+                                </h2>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                                    <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        <p style="margin: 0; color: #718096; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Nama</p>
+                                        <p style="margin: 5px 0 0; color: #2d3748; font-size: 16px; font-weight: 500;">${sanitizedName}</p>
+                                    </div>
+                                    <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                                        <p style="margin: 0; color: #718096; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">Email</p>
+                                        <p style="margin: 5px 0 0; color: #2d3748; font-size: 16px; font-weight: 500;">${sanitizedEmail}</p>
+                                    </div>
+                                    <div style="background: white; padding: 15px; border-radius: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); grid-column: 1 / -1;">
+                                        <p style="margin: 0; color: #718096; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600;">WhatsApp</p>
+                                        <p style="margin: 5px 0 0; color: #2d3748; font-size: 16px; font-weight: 500;">${sanitizedWhatsapp || 'Tidak diisi'}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Message Card -->
+                            <div style="background: white; border-radius: 16px; padding: 30px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0;">
+                                <h2 style="color: #2d3748; margin: 0 0 20px; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 10px;">
+                                        <path d="M20 2H4C2.9 2 2 2.9 2 4V22L6 18H20C21.1 18 22 17.1 22 16V4C22 2.9 21.1 2 20 2ZM20 16H6L4 18V4H20V16Z" fill="#667eea"/>
+                                    </svg>
+                                    Pesan
+                                </h2>
+                                <div style="background: #f7fafc; border-radius: 12px; padding: 20px; border-left: 4px solid #667eea;">
+                                    <p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.7; white-space: pre-wrap;">${sanitizedMessage}</p>
+                                </div>
+                            </div>
+
+                            <!-- Footer -->
+                            <div style="margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px; text-align: center;">
+                                <p style="margin: 0; color: #718096; font-size: 14px; display: flex; align-items: center; justify-content: center;">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-right: 8px;">
+                                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2ZM12 20C7.59 20 4 16.41 4 12C4 7.59 7.59 4 12 4C16.41 4 20 7.59 20 12C20 16.41 16.41 20 12 20ZM12.5 7H11V13L16.25 16.15L17 14.92L12.5 12.25V7Z" fill="#718096"/>
+                                    </svg>
+                                    Dikirim pada ${new Date().toLocaleString('id-ID', { 
+                                        year: 'numeric', 
+                                        month: 'long', 
+                                        day: 'numeric', 
+                                        hour: '2-digit', 
+                                        minute: '2-digit' 
+                                    })}
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <!-- Bottom Bar -->
+                        <div style="background: #2d3748; padding: 20px; text-align: center; border-radius: 0 0 8px 8px;">
+                            <p style="margin: 0; color: #a0aec0; font-size: 14px;">
+                                © 2024 Codex.Project. Semua hak dilindungi.
+                            </p>
+                        </div>
+
+                    </div>
+                </body>
+                </html>
+            `
+        };
+
+        // Kirim email
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email berhasil dikirim:', info.messageId);
+
         res.json({
             success: true,
             message: 'Terima kasih! Pesan Anda telah terkirim. Kami akan menghubungi Anda segera.'
         });
-    }, 1000);
+
+    } catch (error) {
+        console.error('Error mengirim email:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Terjadi kesalahan saat mengirim pesan. Silakan coba lagi nanti.'
+        });
+    }
 });
 
 // API tambahan

@@ -255,7 +255,22 @@
     <!-- Footer Placeholder -->
     <div id="footer-placeholder"></div>
 
-    <script src="../script.js"></script>
+    <script src="../src/assets/include-header-footer.js"></script>
+    
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/688e37d909ef001928d483b8/1j1lokb0a';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+    
     <script>
     // Loading overlay hide on page load
     window.addEventListener('load', function() {
@@ -269,98 +284,22 @@
       }
     });
 
-    // Memuat header
-    fetch('../header.html')
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('header-placeholder').innerHTML = data;
-
-        // Inisialisasi menu mobile jika diperlukan
-        const hamburger = document.querySelector('.hamburger');
-        const navMenu = document.querySelector('.nav-menu');
-        if (hamburger && navMenu) {
-            hamburger.addEventListener('click', () => {
-                hamburger.classList.toggle('active');
-                navMenu.classList.toggle('active');
-            });
-            document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', function() {
-                // Menghapus kelas 'active' dari semua elemen nav-link
-                document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-                // Menambahkan kelas 'active' pada nav-link yang diklik
-                this.classList.add('active');
-
-                // Menutup menu setelah mengklik salah satu link di tampilan mobile
-                hamburger.classList.remove('active');
-                navMenu.classList.remove('active');
-            }));
-        }
-
-        // Setelah header dimuat, aktifkan menu berdasarkan halaman saat ini
-        activateMenu(); // Panggil fungsi activateMenu setelah header dimuat
-
-        // Aktifkan nav-link Layanan jika di halaman Content Marketing
-        if (window.location.pathname.toLowerCase().includes('content-marketing.html')) {
-            const layananLink = Array.from(document.querySelectorAll('.nav-link')).find(link => link.textContent.trim().toLowerCase().includes('layanan'));
-            if (layananLink) layananLink.classList.add('active');
-        }
-        const navClose = document.querySelector('.nav-close');
-        if (navClose) {
-          navClose.addEventListener('click', () => {
-            hamburger.classList.remove('active');
-            navMenu.classList.remove('active');
-            headerOverlay.classList.remove('active');
-            document.body.classList.remove('menu-open');
-          });
-        }
-    })
-    .catch(err => console.error('Error loading header:', err));
-
-    // Memuat footer
-    fetch('../footer.html')
-    .then(response => response.text())
-    .then(data => {
-        document.getElementById('footer-placeholder').innerHTML = data;
-    })
-    .catch(err => console.error('Error loading footer:', err));
-
-    // Function to activate the menu based on the current page
-    function activateMenu() {
-        const menuItems = document.querySelectorAll('.nav-link');
-        const currentPath = window.location.pathname.replace(/\/+/g, '/');
-        console.log('Current Path:', currentPath); // Debug log to check the current path
-
-        // Loop through the nav items and activate based on the current path
-        menuItems.forEach(item => {
-            let href = item.getAttribute('href');
-            let linkPath = href.toLowerCase().replace('.html', '');
-            console.log('Checking link:', href, 'Against path:', currentPath); // Log each link
-            if (currentPath.includes(linkPath)) {
-                console.log('Activating:', href); // Log when a link is activated
-            } else {
-                item.classList.remove('active');
-            }
+    // Load header dan footer menggunakan includeHTML
+    document.addEventListener('DOMContentLoaded', function() {
+        includeHTML('#header-placeholder', '../header.html', function() {
+            console.log('Header Loaded ✅');
+            setTimeout(() => {
+                activateMenu();
+                initMobileNavbar();
+            }, 100);
         });
+        
+        includeHTML('#footer-placeholder', '../footer.html', function() {
+            console.log('Footer Loaded ✅');
+        });
+    });
 
-        // Special case for the 'Layanan' link (should be active for any service-related page)
-        const layananPages = [
-            'content-marketing',
-            'website-optimization',
-            'visual-engagement',
-            'web-development',
-            'brand-development',
-            'server-reliability'
-        ];
 
-        const isLayananPage = layananPages.some(page => currentPath.includes(page));
-        console.log('Is Layanan Page:', isLayananPage); // Log if the current page is a layanan page
-        if (isLayananPage) {
-            const layananLink = Array.from(menuItems).find(link => link.textContent.trim().toLowerCase().includes('layanan'));
-            if (layananLink) {
-                console.log('Activating Layanan Link'); // Log when Layanan is activated
-                layananLink.classList.add('active');
-            }
-        }
-    }
 
     // Animasi typewriter untuk judul portofolio-hero
     document.addEventListener('DOMContentLoaded', function() {
